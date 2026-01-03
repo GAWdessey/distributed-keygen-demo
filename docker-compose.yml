@@ -1,4 +1,13 @@
 services:
+  # 1. The Database (Now with 4GB RAM Limit)
+  memcached:
+    image: memcached:alpine
+    ports:
+      - "11211:11211"
+    command: -m 4096 -I 2m  # Allow 4GB RAM and larger items
+    restart: always
+
+  # 2. The Key Generator (Your Workers)
   keygen-worker:
     build: .
     depends_on:
@@ -9,8 +18,15 @@ services:
       resources:
         limits:
           cpus: '0.50'
-          memory: 512M
-  memcached:
-    image: memcached:alpine
-    ports:
-      - "11211:11211"
+
+  # 3. The Data Loader (Runs once)
+  data-loader:
+    build: .
+    depends_on:
+      - memcached
+    volumes:
+      - ./data:/data  # Mounts your local folder to Docker
+    environment:
+      - MEMCACHED_HOST=memcached
+      - PYTHONUNBUFFERED=1
+    command: ["python", "loader.py"]

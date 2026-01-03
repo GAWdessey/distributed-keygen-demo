@@ -8,6 +8,7 @@ from datetime import datetime
 from pymemcache.client import base
 
 # --- Configuration ---
+host = os.getenv('MEMCACHED_HOST', 'localhost')
 MAX_PROCESSES = multiprocessing.cpu_count() or 1
 BATCH_SIZE = 1000  # Adjusted for cleaner math, can be higher
 MEMCACHED_SERVER = ('localhost', 11211)
@@ -130,7 +131,7 @@ if __name__ == '__main__':
             
             last_count = current_total
             
-            print(f"\rRate: {rate:,.0f} keys/s | Total Checked: {current_total:,.0f}", end='', flush=True)
+            print(f"Rate: {rate:,.0f} keys/s | Total Checked: {current_total:,.0f}")
 
     except KeyboardInterrupt:
         print("\nStopping...")

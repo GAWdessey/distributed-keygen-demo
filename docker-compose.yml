@@ -1,0 +1,16 @@
+services:
+  keygen-worker:
+    build: .
+    depends_on:
+      - memcached
+    environment:
+      - MEMCACHED_HOST=memcached
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+  memcached:
+    image: memcached:alpine
+    ports:
+      - "11211:11211"
